@@ -1,0 +1,21 @@
+{
+    "name": "KKBOX Web Player",
+    "short_name": "KKBOX Web",
+    "theme_color": "#ffffff",
+    "icons": [
+        {
+            "src": "/src/images/icon-192x192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/src/images/icon-144x144.png",
+            "type": "image/png",
+            "sizes": "144x144"
+        }
+    ],
+    "start_url": "https://play-beta.kkbox.com/",
+    "display": "minimal-ui",
+    "background_color": "#000000",
+    "related_applications": []
+}

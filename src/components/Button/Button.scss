@@ -1,0 +1,15 @@
+@import "~styles/base/_constant.scss";
+
+.btn {
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: $primary-500;
+    color: $gray-100;
+    fill: $gray-100;
+    &:hover {
+        background-color: $primary-400;
+    }
+}

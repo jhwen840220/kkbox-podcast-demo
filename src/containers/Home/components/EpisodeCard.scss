@@ -1,0 +1,18 @@
+@import "~styles/base/_constant.scss";
+
+.episode-card {
+    &:first-child {
+        margin-top: map-get($spacingVariables, "md");
+    }
+    &:hover {
+        transform: translateY(-1 * map-get($spacingVariables, "sm"));
+    }
+    &:active {
+        box-shadow: 0 6px 12px 0 rgba($gray-900, 0.1) inset;
+    }
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 6px 12px 0 rgba($gray-900, 0.1);
+    cursor: pointer;
+    transition: 0.5s transform;
+}

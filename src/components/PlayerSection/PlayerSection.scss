@@ -1,0 +1,50 @@
+@import "~styles/base/_constant.scss";
+
+.player-section {
+    bottom: 0;
+    width: 100%;
+    background-color: $gray-100;
+}
+.play-bar {
+    width: 100%;
+    height: map-get($spacingVariables, "xs");
+    background-color: $gray-300;
+    top: 0;
+    left: 0;
+}
+
+.play-bar-current {
+    width: 100%;
+    height: map-get($spacingVariables, "xs");
+    background-color: $primary-500;
+    border-radius: 0 3px 3px 0;
+    top: 0;
+    left: -100%;
+}
+.play-bar-current-focus {
+    &:after {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        content: '';
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background-color: $primary-500;
+        transform: translateY(-50%);
+    }
+}
+
+.play-btn {
+    cursor: pointer;
+    &:hover {
+        fill: $primary-500;
+    }
+    &:active {
+        fill: $primary-700;
+    }
+}
+
+.duration-block {
+    right: map-get($spacingVariables, "md");
+}

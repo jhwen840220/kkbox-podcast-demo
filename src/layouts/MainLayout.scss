@@ -1,0 +1,28 @@
+@import "~styles/base/_constant.scss";
+@import "~styles/base/_variables.scss";
+
+.header {
+    top: 0;
+    width: 100%;
+    border-bottom: 1px solid $gray-400;
+    background-color: $gray-100;
+    z-index: 1000;
+}
+
+.body {
+    margin-top: $header-height;
+    padding-bottom: $footer-height;
+}
+.logo {
+    fill: $primary-500;
+    cursor: pointer;
+    &:hover {
+        fill: $primary-400;
+    }
+}
+
+.player-section {
+    border-top: 1px solid $gray-400;
+    bottom: 0;
+    width: 100%;
+}

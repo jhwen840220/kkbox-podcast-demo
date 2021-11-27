@@ -1,0 +1,116 @@
+@import "~styles/base/_constant.scss";
+:global {
+    @each $size, $pixel in $spacingVariables {
+        .m-#{$size} {
+            margin: $pixel;
+        }
+    }
+    // ==========================================================================
+    // Margin top-bottom property
+    // ==========================================================================
+    @each $size, $pixel in $spacingVariables {
+        .m-y-#{$size} {
+            margin-top: $pixel;
+            margin-bottom: $pixel;
+        }
+    }
+    // ==========================================================================
+    // Margin top property
+    // ==========================================================================
+    @each $size, $pixel in $spacingVariables {
+        .m-t-#{$size} {
+            margin-top: $pixel;
+        }
+    }
+    // ==========================================================================
+    // Margin bottom property
+    // ==========================================================================
+    @each $size, $pixel in $spacingVariables {
+        .m-b-#{$size} {
+            margin-bottom: $pixel;
+        }
+    }
+    // ==========================================================================
+    // Margin left-right property
+    // ==========================================================================
+    @each $size, $pixel in $spacingVariables {
+        .m-x-#{$size} {
+            margin-left: $pixel;
+            margin-right: $pixel;
+        }
+    }
+    // ==========================================================================
+    // Margin right property
+    // ==========================================================================
+    @each $size, $pixel in $spacingVariables {
+        .m-r-#{$size} {
+            margin-right: $pixel;
+        }
+    }
+    // ==========================================================================
+    // Margin left property
+    // ==========================================================================
+    @each $size, $pixel in $spacingVariables {
+        .m-l-#{$size} {
+            margin-left: $pixel;
+        }
+    }
+    // ==========================================================================
+    // Padding property
+    // ==========================================================================
+    @each $size, $pixel in $spacingVariables {
+        .p-#{$size} {
+            padding: $pixel;
+        }
+    }
+    // ==========================================================================
+    // Padding left-right property
+    // ==========================================================================
+    @each $size, $pixel in $spacingVariables {
+        .p-x-#{$size} {
+            padding-left: $pixel;
+            padding-right: $pixel;
+        }
+    }
+    // ==========================================================================
+    // Padding left property
+    // ==========================================================================
+    @each $size, $pixel in $spacingVariables {
+        .p-l-#{$size} {
+            padding-left: $pixel;
+        }
+    }
+    // ==========================================================================
+    // Padding right property
+    // ==========================================================================
+    @each $size, $pixel in $spacingVariables {
+        .p-r-#{$size} {
+            padding-right: $pixel;
+        }
+    }
+    // ==========================================================================
+    // Padding top-bottom property
+    // ==========================================================================
+    @each $size, $pixel in $spacingVariables {
+        .p-y-#{$size} {
+            padding-top: $pixel;
+            padding-bottom: $pixel;
+        }
+    }
+    // ==========================================================================
+    // Padding top property
+    // ==========================================================================
+    @each $size, $pixel in $spacingVariables {
+        .p-t-#{$size} {
+            padding-top: $pixel;
+        }
+    }
+    // ==========================================================================
+    // Padding bottom property
+    // ==========================================================================
+    @each $size, $pixel in $spacingVariables {
+        .p-b-#{$size} {
+            padding-bottom: $pixel;
+        }
+    }
+}
