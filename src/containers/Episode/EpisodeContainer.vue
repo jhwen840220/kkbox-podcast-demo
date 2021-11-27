@@ -53,6 +53,7 @@
 import { ref, onMounted, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
+import { setIntersectionObserver } from "~utils";
 
 import LazyLoadImage from "~components/LazyLoadImage/LazyLoadImage";
 import Button from "~components/Button/Button";
@@ -89,22 +90,18 @@ export default {
         };
         onMounted(() => {
             document.body.scrollTop = 0;
-            if ("IntersectionObserver" in window) {
-                let scrollport = null;
-
-                let observer = new IntersectionObserver(
-                    areas => {
+            setIntersectionObserver({
+                    target: episodeInfoRef.value,
+                    callback: areas => {
                         shouldEpisodeInfoSticky.value = !(
                             areas[0].intersectionRatio > 0.5
                         );
                     },
-                    {
-                        root: scrollport,
+                    options: {
+                        root: null,
                         threshold: 0.5,
-                    }
-                );
-                observer.observe(episodeInfoRef.value);
-            }
+                    },
+                });
 
             if (episodeList.value) {
                 detectEpisodeInfo();

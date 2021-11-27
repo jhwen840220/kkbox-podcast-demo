@@ -3,8 +3,8 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import App from "~src/App.vue";
 import store from "~vuex/store";
 
-import Home from "~containers/Home/HomeContainer";
-import Episode from "~containers/Episode/EpisodeContainer";
+const Home = () => import(/* webpackChunkName: "Home" */ "~containers/Home/HomeContainer");
+const Episode = () => import(/* webpackChunkName: "Episode" */ "~containers/Episode/EpisodeContainer");
 
 import "~styles/common.scss";
 
@@ -29,7 +29,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     window.document.title = to.meta.title;
-    next()
+    next();
 });
 
 const app = createApp(App);

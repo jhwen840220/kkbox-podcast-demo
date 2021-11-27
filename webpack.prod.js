@@ -16,7 +16,7 @@ module.exports = merge(CommonConfig, {
     plugins: [
         new MiniCssExtractPlugin({
             filename: 'css/[name].[contenthash].css',
-            chunkFilename: 'css/[id].[contenthash].css'
+            chunkFilename: 'css/[name].[contenthash].css'
         }),
         new SpriteLoaderPlugin()
     ],

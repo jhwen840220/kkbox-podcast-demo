@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { onMounted } from "vue";
 import { useStore } from "vuex";
 
 import MainLayout from "~layouts/MainLayout";
@@ -12,15 +12,13 @@ export default {
     components: {
         MainLayout,
     },
-    setup(props, { attrs }) {
+    setup() {
         const store = useStore();
-
         onMounted(() => {
             store.dispatch("getChannelData");
         });
 
         return {
-            
         }
     },
 };

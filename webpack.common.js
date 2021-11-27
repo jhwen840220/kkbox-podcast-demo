@@ -9,12 +9,13 @@ const isProd = process.env.NODE_ENV === "production";
 
 const commonConfig = {
     entry: {
-        main: path.resolve(__dirname, "./src/index.js"),
+        Main: path.resolve(__dirname, "./src/index.js"),
     },
     output: {
         path: path.resolve(__dirname, "dist"),
         publicPath: "",
         filename: "[name].js?v=[contenthash]",
+        chunkFilename: '[name].js?v=[contenthash]',
     },
     module: {
         rules: [
@@ -62,7 +63,7 @@ const commonConfig = {
                         options: {
                             limit: 8000,
                             name: "/images/[name]-[hash:8].[ext]",
-                            publicPath: '.',
+                            publicPath: isProd ? "./" : "",
                         },
                     },
                     {
@@ -104,11 +105,42 @@ const commonConfig = {
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, "./index.html"),
             filename: "index.html",
+            favicon: path.resolve(__dirname, './src/images/favicon.ico'),
         }),
         new VueLoaderPlugin(),
         new CleanWebpackPlugin(),
     ],
     optimization: {
+        splitChunks: {
+            minSize: 30000,
+            maxAsyncRequests: 1,
+            automaticNameDelimiter: '-',
+            cacheGroups: {
+                common: {
+                    name: 'Commons',
+                    chunks: 'initial',
+                    minChunks: 4,
+                    priority: 3,
+                    test(module, chunks) {
+                        return module.resource
+                    }
+                },
+                style: {
+                    name: 'Commons',
+                    test: /\.(css|scss)$/,
+                    chunks: 'all',
+                    minChunks: 3,
+                    reuseExistingChunk: true,
+                    enforce: true
+                },
+                vendor: {
+                    name: 'Vendor',
+                    test: /(node_modules).*(?<!\.css)$/,
+                    chunks: 'initial',
+                    priority: 4
+                }
+            }
+        },
         minimizer: [],
     },
     resolve: {

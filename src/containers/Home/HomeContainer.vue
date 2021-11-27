@@ -35,7 +35,7 @@
 <script>
 import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
-
+import { setIntersectionObserver } from "~utils";
 import EpisodeList from "~containers/Home/components/EpisodeList";
 import LazyLoadImage from "~components/LazyLoadImage/LazyLoadImage";
 
@@ -51,24 +51,19 @@ export default {
         const shouldchannelInfoSticky = ref(false);
         const channelInfoRef = ref(null);
 
-        
         onMounted(() => {
-            if ("IntersectionObserver" in window) {
-                let scrollport = null;
-
-                let observer = new IntersectionObserver(
-                    areas => {
-                        shouldchannelInfoSticky.value = !(
-                            areas[0].intersectionRatio > 0.5
-                        );
-                    },
-                    {
-                        root: scrollport,
-                        threshold: 0.5,
-                    }
-                );
-                observer.observe(channelInfoRef.value);
-            }
+            setIntersectionObserver({
+                target: channelInfoRef.value,
+                callback: areas => {
+                    shouldchannelInfoSticky.value = !(
+                        areas[0].intersectionRatio > 0.5
+                    );
+                },
+                options: {
+                    root: null,
+                    threshold: 0.5,
+                },
+            });
         });
         return {
             channelInfoRef,

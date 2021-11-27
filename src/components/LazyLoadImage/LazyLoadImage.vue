@@ -10,6 +10,7 @@
 
 <script>
 import { ref, onMounted, watch } from "vue";
+import { setIntersectionObserver } from "~utils";
 import kkboxLogo from "~images/kkbox.png";
 export default {
     name: "LazyLoadImage",
@@ -30,67 +31,32 @@ export default {
             type: [String, Number],
             default: "100%",
         },
-        scrollRef: {
-            type: [String, Object],
-            default: null,
-        },
     },
     setup(props) {
-        const { scrollRef } = props;
         const imgRef = ref(null);
         const imgSrc = ref(kkboxLogo);
 
-        function changeImgSrc(src) {
-            imgSrc.value = src;
-        }
-
+        const setLazyLoad = src => {
+            setIntersectionObserver({
+                target: imgRef.value,
+                callback: areas => {
+                    if (!areas[0].isIntersecting) return;
+                    imgSrc.value = src;
+                },
+                fallback: () => {
+                    imgSrc.value = src;
+                },
+            });
+        };
         onMounted(() => {
             if (props.src) {
-                if ("IntersectionObserver" in window) {
-                    let scrollport = null;
-                    if (scrollRef) {
-                        scrollport =
-                            typeof scrollRef === "string"
-                                ? document.querySelector(scrollRef)
-                                : scrollRef;
-                    }
-
-                    let observer = new IntersectionObserver(
-                        areas => {
-                            if (!areas[0].isIntersecting) return;
-                            changeImgSrc(props.src);
-                        },
-                        {
-                            root: scrollport,
-                        }
-                    );
-                    observer.observe(imgRef.value);
-                } else changeImgSrc(props.src);
+                setLazyLoad(props.src);
             }
         });
         watch(
             () => props.src,
-            (val) => {
-                if ("IntersectionObserver" in window) {
-                    let scrollport = null;
-                    if (scrollRef) {
-                        scrollport =
-                            typeof scrollRef === "string"
-                                ? document.querySelector(scrollRef)
-                                : scrollRef;
-                    }
-
-                    let observer = new IntersectionObserver(
-                        areas => {
-                            if (!areas[0].isIntersecting) return;
-                            changeImgSrc(val);
-                        },
-                        {
-                            root: scrollport,
-                        }
-                    );
-                    observer.observe(imgRef.value);
-                } else changeImgSrc(val);
+            val => {
+                setLazyLoad(val);
             }
         );
 

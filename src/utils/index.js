@@ -11,3 +11,22 @@ export const getAudioTime = time => {
 
     return result;
 };
+
+export const setIntersectionObserver = ({
+    target = document.body,
+    callback = null,
+    options = {
+        root: null,
+    },
+    fallback = null
+}) => {
+    if ("IntersectionObserver" in window) {
+        let observer = new IntersectionObserver(
+            areas => {
+                callback && callback(areas);
+            },
+            options
+        );
+        observer.observe(target);
+    } else fallback && fallback()
+}

@@ -49,14 +49,7 @@
     <audio ref="audioRef"></audio>
     <div
         v-if="isBarDragging"
-        class="position-fixed"
-        :style="{
-            top: 0,
-            height: 0,
-            width: '100%',
-            height: '100%',
-            'z-index': 1000,
-        }"
+        :class="[$style['bar-dragging-mask'], 'position-fixed']"
     />
 </template>
 
@@ -84,19 +77,18 @@ export default {
         const playBarRef = ref(null); // 整體進度條 ref
         const currentPlayBarRef = ref(null); // 跑動進度條 ref
 
-        const onTogglePlay = () => {
-            const { episodeId } = episodeInfo.value;
-            if (episodeId) {
-                setAudio({ episodeId, isUpdateEpisode: false });
-            }
-        };
-
         const currentEpisodeIndex = ref(null); // 目前集數的 index
-        const episodeDuration = ref("");
+        const episodeDuration = ref(""); //
         const episodeCurrentTime = ref("");
 
         let setEpisodeCurrentTime = null;
 
+        /**
+         * @description Modal 或 Dialog 點擊 event 後所需要的 loadng 共用 method
+         * @param { string } episodeId 欲設定的集數 id
+         * @param { boolean } isUpdateEpisode 是否更新集數
+         * @param { boolean } isRestart 是否按「重新播放」
+         */
         const setAudio = ({
             episodeId,
             isUpdateEpisode = true,
@@ -120,7 +112,6 @@ export default {
                     episodeCurrentTime.value = getAudioTime(
                         audioRef.value.currentTime
                     );
-
                     // 因為會有總長度在會後幾秒會多加的緣故，需多判斷是否需要更改總長度秒數
                     if (
                         audioRef.value.duration &&
@@ -131,7 +122,7 @@ export default {
                             audioRef.value.duration
                         );
                     }
-                }, 500);
+                }, 250);
             };
 
             audioRef.value.onpause = () => {
@@ -153,7 +144,6 @@ export default {
                 // 結束一集後先改變撥放狀態為「暫停」且清除集數長度
                 isPlaying.value = false;
 
-                episodeDuration.value = "";
                 // 若播放集數非為最後一集，則將 episodeInfo 改為下一集
                 if (currentEpisodeIndex.value > 0) {
                     const nextEpisodeInfo = Array.from(episodeList.value)[
@@ -180,6 +170,7 @@ export default {
         };
 
         onMounted(() => {
+            // 進頁面後尋找目前播放的集數 index
             if (!currentEpisodeIndex.value && episodeInfo.value.episodeId) {
                 currentEpisodeIndex.value = Array.from(
                     episodeList.value
@@ -188,6 +179,7 @@ export default {
                 });
             }
         });
+
         // 換集數 id 的監聽
         watch(
             () => episodeInfo.value.episodeId,
@@ -251,7 +243,9 @@ export default {
                 // 並且 audio 播放指定位置
                 if (audioRef.value.duration) {
                     const selectedTime =
-                        (e.clientX / document.body.clientWidth) *
+                        (e.clientX >= document.body.clientWidth
+                            ? e.clientX
+                            : e.clientX / document.body.clientWidth) *
                         audioRef.value.duration;
                     audioRef.value.currentTime = selectedTime;
                     episodeCurrentTime.value = getAudioTime(selectedTime);
@@ -269,6 +263,13 @@ export default {
             clearInterval(setEpisodeCurrentTime);
             setEpisodeCurrentTime = null;
         });
+
+        const onTogglePlay = () => {
+            const { episodeId } = episodeInfo.value;
+            if (episodeId) {
+                setAudio({ episodeId, isUpdateEpisode: false });
+            }
+        };
 
         return {
             isPlaying,
