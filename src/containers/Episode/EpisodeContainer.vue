@@ -38,6 +38,7 @@
             <Button
                 :text="isCurrentEpisode ? '重新播放' : '播放'"
                 svgIconName="play-svgo"
+                data-test="play-btn"
                 :class="[
                     shouldEpisodeInfoSticky ? 'm-t-md' : 'm-b-sm',
                     'm-l-xl',

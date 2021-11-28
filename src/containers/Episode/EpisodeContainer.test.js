@@ -3,17 +3,15 @@ import router from "~router";
 import store from "~vuex";
 
 import { mount, shallowMount } from "@vue/test-utils";
-describe("LazyLoadImage", () => {
-    test("test", async () => {
-        const wrapper = shallowMount(EpisodeContainer, {
-            // props: {
-            //     src: ""
-            // }
+describe("EpisodeContainer", () => {
+    test("click play button", async () => {
+        const wrapper = mount(EpisodeContainer, {
             global: {
                 plugins: [router, store],
             },
         });
-        console.log(wrapper.html())
-        expect(123).toBe(123);
+        expect(wrapper.find('[data-test="play-btn"]').text()).toBe("播放");
+        await wrapper.get('[data-test="play-btn"]').trigger('click')
+        expect(wrapper.find('[data-test="play-btn"]').text()).toBe("重新播放");
     });
 });
