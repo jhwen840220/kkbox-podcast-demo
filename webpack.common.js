@@ -119,7 +119,7 @@ const commonConfig = {
                 vendor: {
                     name: 'Vendor',
                     test: /(node_modules).*(?<!\.css)$/,
-                    chunks: 'initial',
+                    chunks: 'all',
                     priority: 4
                 }
             }
