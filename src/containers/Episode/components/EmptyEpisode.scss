@@ -1,0 +1,4 @@
+@import "~styles/base/_variables.scss";
+.empty-episode {
+    height: calc(100vh - #{$header-height} - #{$footer-height});
+}

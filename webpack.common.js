@@ -116,23 +116,6 @@ const commonConfig = {
             maxAsyncRequests: 1,
             automaticNameDelimiter: '-',
             cacheGroups: {
-                common: {
-                    name: 'Commons',
-                    chunks: 'initial',
-                    minChunks: 4,
-                    priority: 3,
-                    test(module, chunks) {
-                        return module.resource
-                    }
-                },
-                style: {
-                    name: 'Commons',
-                    test: /\.(css|scss)$/,
-                    chunks: 'all',
-                    minChunks: 3,
-                    reuseExistingChunk: true,
-                    enforce: true
-                },
                 vendor: {
                     name: 'Vendor',
                     test: /(node_modules).*(?<!\.css)$/,
@@ -155,6 +138,7 @@ const commonConfig = {
             "~svg": path.join(__dirname, "src/svg"),
             "~styles": path.join(__dirname, "src/styles"),
             "~utils": path.join(__dirname, "src/utils"),
+            "~router": path.join(__dirname, "src/router"),
             "~vue": path.join(__dirname, "src/vue"),
             "~vuex": path.join(__dirname, "src/vuex"),
         },
