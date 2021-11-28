@@ -11,14 +11,17 @@ const store = createStore({
             },
             episodeList: null,
             episodeInfo: {},
-            isRestart: false
+            isRestart: false,
         };
     },
     actions: {
         getChannelData(context) {
             axios
                 .get(
-                    "https://feeds.soundon.fm/podcasts/954689a5-3096-43a4-a80b-7810b219cef3.xml"
+                    "https://feeds.soundon.fm/podcasts/954689a5-3096-43a4-a80b-7810b219cef3.xml",
+                    {
+                        crossDomain: true,
+                    }
                 )
                 .then(response => response.data)
                 .then(str =>
@@ -41,19 +44,27 @@ const store = createStore({
                                     el.querySelector("title").innerHTML
                                 ),
                                 desc: replaceCDATA(
-                                    el.querySelector("description").innerHTML.replace(/\n/g, '<br/>')
+                                    el
+                                        .querySelector("description")
+                                        .innerHTML.replace(/\n/g, "<br/>")
                                 ),
                                 pubDate: replaceCDATA(
                                     el.querySelector("pubDate").innerHTML
                                 ),
                                 imgSrc: replaceCDATA(
-                                    el.getElementsByTagName("itunes:image")[0].getAttribute("href")
+                                    el
+                                        .getElementsByTagName("itunes:image")[0]
+                                        .getAttribute("href")
                                 ),
                                 duration: replaceCDATA(
-                                    el.getElementsByTagName("itunes:duration")[0].innerHTML
+                                    el.getElementsByTagName(
+                                        "itunes:duration"
+                                    )[0].innerHTML
                                 ),
                                 audioSrc: replaceCDATA(
-                                    el.querySelector("enclosure").getAttribute("url")
+                                    el
+                                        .querySelector("enclosure")
+                                        .getAttribute("url")
                                 ),
                             }
                         );
@@ -78,8 +89,8 @@ const store = createStore({
             state.episodeInfo = payload;
         },
         SET_IS_RESTART(state, payload) {
-            state.isRestart = payload
-        }
+            state.isRestart = payload;
+        },
     },
 });
 
