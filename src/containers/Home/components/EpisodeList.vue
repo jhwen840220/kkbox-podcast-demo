@@ -51,7 +51,7 @@ export default {
             });
         };
 
-        const episodeList = computed(() => store.state.episodeList);
+        const episodeList = computed(() => store.getters.episodeList);
         const currentCount = ref(0);
         const currentEpisodeList = ref([]);
 

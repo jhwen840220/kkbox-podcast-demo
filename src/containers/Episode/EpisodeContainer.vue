@@ -87,8 +87,8 @@ export default {
             imgSrc: "",
         });
 
-        const episodeList = computed(() => store.state.episodeList);
-        const episodeInfo = computed(() => store.state.episodeInfo);
+        const episodeList = computed(() => store.getters.episodeList);
+        const episodeInfo = computed(() => store.getters.episodeInfo);
         const hasEpisodeInfo = ref(true);
 
         const detectEpisodeInfo = () => {
@@ -159,7 +159,7 @@ export default {
             episodeInfoRef,
             shouldEpisodeInfoSticky,
             currentEpisodeInfo,
-            channelInfo: computed(() => store.state.channelInfo),
+            channelInfo: computed(() => store.getters.channelInfo),
             hasEpisodeInfo,
             isCurrentEpisode,
             onTogglePlay,

@@ -68,7 +68,7 @@ export default {
         return {
             channelInfoRef,
             shouldchannelInfoSticky,
-            channelInfo: computed(() => store.state.channelInfo),
+            channelInfo: computed(() => store.getters.channelInfo),
         };
     },
 };

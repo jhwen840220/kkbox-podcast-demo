@@ -68,8 +68,8 @@ export default {
     },
     setup() {
         const store = useStore();
-        const episodeList = computed(() => store.state.episodeList);
-        const episodeInfo = computed(() => store.state.episodeInfo);
+        const episodeList = computed(() => store.getters.episodeList);
+        const episodeInfo = computed(() => store.getters.episodeInfo);
         const isPlaying = ref(false);
 
         // refs
@@ -193,7 +193,7 @@ export default {
             }
         );
 
-        const isRestart = computed(() => store.state.isRestart);
+        const isRestart = computed(() => store.getters.isRestart);
         watch(
             () => isRestart.value,
             val => {
@@ -275,7 +275,7 @@ export default {
             playBarRef,
             currentPlayBarRef,
             episodeInfo,
-            channelInfo: computed(() => store.state.channelInfo),
+            channelInfo: computed(() => store.getters.channelInfo),
             onMovePlayBar,
             onTogglePlay,
         };

@@ -14,6 +14,12 @@ const store = createStore({
             isRestart: false,
         };
     },
+    getters: {
+        channelInfo: state => state.channelInfo,
+        episodeList: state => state.episodeList,
+        episodeInfo: state => state.episodeInfo,
+        isRestart: state => state.isRestart,
+    },
     actions: {
         getChannelData(context) {
             axios

@@ -41,7 +41,7 @@ export default {
     setup(props) {
         const store = useStore();
         return {
-            channelInfo: computed(() => store.state.channelInfo),
+            channelInfo: computed(() => store.getters.channelInfo),
             episodeDuration: computed(() => getAudioTime(props.duration)),
             pubDatetime: computed(() =>
                 dayjs(props.pubDate).format("YYYY-MM-DD")
