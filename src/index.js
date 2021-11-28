@@ -3,8 +3,12 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import App from "~src/App.vue";
 import store from "~vuex/store";
 
-const Home = () => import(/* webpackChunkName: "Home" */ "~containers/Home/HomeContainer");
-const Episode = () => import(/* webpackChunkName: "Episode" */ "~containers/Episode/EpisodeContainer");
+const Home = () =>
+    import(/* webpackChunkName: "Home" */ "~containers/Home/HomeContainer");
+const Episode = () =>
+    import(
+        /* webpackChunkName: "Episode" */ "~containers/Episode/EpisodeContainer"
+    );
 
 import "~styles/common.scss";
 

@@ -1,17 +1,17 @@
 <template>
     <section
-        v-if="episodeList.length"
+        v-if="currentEpisodeList.length"
         :class="shouldchannelInfoSticky ? $style['episode-section-sticky'] : ''"
         ref="episodeListRef"
     >
         <EpisodeCard
-            v-for="(episode, index) in episodeList"
+            v-for="(episode, index) in currentEpisodeList"
             :key="index"
-            :imgSrc="episode[1].imgSrc"
-            :title="episode[1].title"
-            :pubDate="episode[1].pubDate"
-            :duration="episode[1].duration"
-            @click="goToEpisode(episode[0])"
+            :imgSrc="episode.imgSrc"
+            :title="episode.title"
+            :pubDate="episode.pubDate"
+            :duration="episode.duration"
+            @click="goToEpisode(episode.episodeId)"
         />
     </section>
 </template>
@@ -51,31 +51,42 @@ export default {
             });
         };
 
-        const totalEpisodeListMap = computed(() => store.state.episodeList);
+        const episodeList = computed(() => store.state.episodeList);
         const currentCount = ref(0);
-        const episodeList = ref([]);
+        const currentEpisodeList = ref([]);
+
+        // 原始資料格式為 map，需轉換為 array 進行後續操作
+        const handleFormatEpisodeList = dataMap => {
+            const dataArr = Array.from(dataMap);
+            // map 轉 array 格式會變為 [[key], [value]]
+            return dataArr.map(data => {
+                return {
+                    episodeId: data[0], // 以 episodeId 為 key 值，所以取得 index 為 0
+                    ...data[1],
+                };
+            });
+        };
+
+        // 初始渲染
+        const getCurrentEpisodeList = dataMap => {
+            const totalEpisodeList = handleFormatEpisodeList(dataMap);
+            currentCount.value =
+                totalEpisodeList.length > 20 ? 20 : totalEpisodeList.length;
+            currentEpisodeList.value = totalEpisodeList.slice(
+                0,
+                currentCount.value
+            );
+        };
 
         onMounted(() => {
-            if (totalEpisodeListMap.value) {
-                const totalEpisodeList = Array.from(totalEpisodeListMap.value);
-                currentCount.value =
-                    totalEpisodeList.length > 20 ? 20 : totalEpisodeList.length;
-                episodeList.value = totalEpisodeList.slice(
-                    0,
-                    currentCount.value
-                );
+            if (episodeList.value) {
+                getCurrentEpisodeList(episodeList.value);
             }
         });
         watch(
-            () => totalEpisodeListMap.value,
+            () => episodeList.value,
             val => {
-                const totalEpisodeList = Array.from(val);
-                currentCount.value =
-                    totalEpisodeList.length > 20 ? 20 : totalEpisodeList.length;
-                episodeList.value = totalEpisodeList.slice(
-                    0,
-                    currentCount.value
-                );
+                getCurrentEpisodeList(val);
             }
         );
 
@@ -83,7 +94,7 @@ export default {
         const isIncreasingCount = ref(false);
 
         const onScrollEpisodeList = () => {
-            const totalEpisodeList = Array.from(totalEpisodeListMap.value);
+            const totalEpisodeList = handleFormatEpisodeList(episodeList.value);
 
             const episodeCardCount = episodeListRef.value.children.length;
 
@@ -96,12 +107,13 @@ export default {
                 currentCount.value < totalEpisodeList.length
             ) {
                 isIncreasingCount.value = true;
-                currentCount.value = currentCount.value + 20;
-                // totalEpisodeList.length - currentCount.value > 20
-                //     ? 20
-                //     : totalEpisodeList.length - currentCount.value;
+                currentCount.value =
+                    currentCount.value +
+                    (totalEpisodeList.length - currentCount.value > 20
+                        ? 20
+                        : totalEpisodeList.length - currentCount.value);
 
-                episodeList.value = totalEpisodeList.slice(
+                currentEpisodeList.value = totalEpisodeList.slice(
                     0,
                     currentCount.value
                 );
@@ -119,7 +131,7 @@ export default {
         });
 
         return {
-            episodeList,
+            currentEpisodeList,
             episodeListRef,
             goToEpisode,
         };

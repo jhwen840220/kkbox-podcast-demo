@@ -84,24 +84,19 @@ export default {
         let setEpisodeCurrentTime = null;
 
         /**
-         * @description Modal 或 Dialog 點擊 event 後所需要的 loadng 共用 method
-         * @param { string } episodeId 欲設定的集數 id
+         * @description 取得 audio src 後的一系列事件設定
          * @param { boolean } isUpdateEpisode 是否更新集數
          * @param { boolean } isRestart 是否按「重新播放」
          */
-        const setAudio = ({
-            episodeId,
-            isUpdateEpisode = true,
-            isRestart = false,
-        }) => {
-            const episodeData = episodeList.value.get(episodeId);
+        const setAudio = ({ isUpdateEpisode = true, isRestart = false }) => {
             if (
                 isRestart ||
-                audioRef.value.getAttribute("src") !== episodeData.audioSrc
+                audioRef.value.getAttribute("src") !==
+                    episodeInfo.value.audioSrc
             ) {
                 episodeCurrentTime.value = "";
                 episodeDuration.value = "";
-                audioRef.value.setAttribute("src", episodeData.audioSrc);
+                audioRef.value.setAttribute("src", episodeInfo.value.audioSrc);
             }
             audioRef.value.oncanplay = () => {
                 episodeDuration.value = getAudioTime(audioRef.value.duration);
@@ -130,7 +125,7 @@ export default {
                 setEpisodeCurrentTime = null;
             };
             audioRef.value.ontimeupdate = () => {
-                // 如果沒在拖曳進度條的壯態下才可依撥放進度改變長度
+                // 如果沒在拖曳進度條的狀態下才可依撥放進度改變長度
                 if (!isBarDragging.value) {
                     const { currentTime, duration } = audioRef.value;
                     const playingPresent = `${
@@ -146,12 +141,13 @@ export default {
 
                 // 若播放集數非為最後一集，則將 episodeInfo 改為下一集
                 if (currentEpisodeIndex.value > 0) {
+                    // map 轉 array 格式會變為 [[key], [value]]
                     const nextEpisodeInfo = Array.from(episodeList.value)[
                         currentEpisodeIndex.value - 1
                     ];
                     store.commit("SET_EPISODE_INFO", {
-                        ...nextEpisodeInfo[1],
-                        episodeId: nextEpisodeInfo[0],
+                        ...nextEpisodeInfo[1],          // [1] 為 value
+                        episodeId: nextEpisodeInfo[0],  // [0] 為 key
                     });
                 }
             };
@@ -192,7 +188,6 @@ export default {
                 });
 
                 setAudio({
-                    episodeId: val,
                     isUpdateEpisode: val !== oldVal,
                 });
             }
@@ -206,7 +201,6 @@ export default {
                 setEpisodeCurrentTime = null;
                 if (val) {
                     setAudio({
-                        episodeId: episodeInfo.value.episodeId,
                         isRestart: val,
                     });
                     store.commit("SET_IS_RESTART", false);
@@ -243,10 +237,10 @@ export default {
                 // 並且 audio 播放指定位置
                 if (audioRef.value.duration) {
                     const selectedTime =
+                        audioRef.value.duration *
                         (e.clientX >= document.body.clientWidth
-                            ? e.clientX
-                            : e.clientX / document.body.clientWidth) *
-                        audioRef.value.duration;
+                            ? 1
+                            : e.clientX / document.body.clientWidth);
                     audioRef.value.currentTime = selectedTime;
                     episodeCurrentTime.value = getAudioTime(selectedTime);
                 }
@@ -267,7 +261,7 @@ export default {
         const onTogglePlay = () => {
             const { episodeId } = episodeInfo.value;
             if (episodeId) {
-                setAudio({ episodeId, isUpdateEpisode: false });
+                setAudio({ isUpdateEpisode: false });
             }
         };
 
