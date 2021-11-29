@@ -40,10 +40,10 @@
             <p>{{ channelInfo.name }}</p>
         </div>
         <div
-            v-if="episodeDuration"
+            v-if="currentEpisode.duration"
             :class="[$style['duration-block'], 'position-absolute']"
         >
-            {{ episodeCurrentTime }} / {{ episodeDuration }}
+            {{ currentEpisode.currentTime }} / {{ currentEpisode.duration }}
         </div>
     </footer>
     <audio ref="audioRef"></audio>
@@ -54,7 +54,14 @@
 </template>
 
 <script>
-import { ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
+import {
+    ref,
+    reactive,
+    onMounted,
+    onBeforeUnmount,
+    computed,
+    watch,
+} from "vue";
 import { useStore } from "vuex";
 import { getAudioTime } from "~utils";
 import Icon from "~components/Icon/Icon";
@@ -77,9 +84,11 @@ export default {
         const playBarRef = ref(null); // 整體進度條 ref
         const currentPlayBarRef = ref(null); // 跑動進度條 ref
 
-        const currentEpisodeIndex = ref(null); // 目前集數的 index
-        const episodeDuration = ref(""); //
-        const episodeCurrentTime = ref("");
+        const currentEpisode = reactive({
+            index: null, // 目前集數的 index
+            duration: "", // 目前集數的時長
+            currentTime: "", // 目前集數的撥放位置
+        });
 
         let setEpisodeCurrentTime = null;
 
@@ -94,26 +103,26 @@ export default {
                 audioRef.value.getAttribute("src") !==
                     episodeInfo.value.audioSrc
             ) {
-                episodeCurrentTime.value = "";
-                episodeDuration.value = "";
+                currentEpisode.currentTime = "";
+                currentEpisode.duration = "";
                 audioRef.value.setAttribute("src", episodeInfo.value.audioSrc);
             }
             audioRef.value.oncanplay = () => {
-                episodeDuration.value = getAudioTime(audioRef.value.duration);
+                currentEpisode.duration = getAudioTime(audioRef.value.duration);
             };
 
             audioRef.value.onplay = () => {
                 setEpisodeCurrentTime = setInterval(() => {
-                    episodeCurrentTime.value = getAudioTime(
+                    currentEpisode.currentTime = getAudioTime(
                         audioRef.value.currentTime
                     );
                     // 因為會有總長度在會後幾秒會多加的緣故，需多判斷是否需要更改總長度秒數
                     if (
                         audioRef.value.duration &&
-                        episodeDuration.value !==
+                        currentEpisode.duration !==
                             getAudioTime(audioRef.value.duration)
                     ) {
-                        episodeDuration.value = getAudioTime(
+                        currentEpisode.duration = getAudioTime(
                             audioRef.value.duration
                         );
                     }
@@ -140,14 +149,14 @@ export default {
                 isPlaying.value = false;
 
                 // 若播放集數非為最後一集，則將 episodeInfo 改為下一集
-                if (currentEpisodeIndex.value > 0) {
+                if (currentEpisode.index > 0) {
                     // map 轉 array 格式會變為 [[key], [value]]
                     const nextEpisodeInfo = Array.from(episodeList.value)[
-                        currentEpisodeIndex.value - 1
+                        currentEpisode.index - 1
                     ];
                     store.commit("SET_EPISODE_INFO", {
-                        ...nextEpisodeInfo[1],          // [1] 為 value
-                        episodeId: nextEpisodeInfo[0],  // [0] 為 key
+                        ...nextEpisodeInfo[1], // [1] 為 value
+                        episodeId: nextEpisodeInfo[0], // [0] 為 key
                     });
                 }
             };
@@ -167,12 +176,12 @@ export default {
 
         onMounted(() => {
             // 進頁面後尋找目前播放的集數 index
-            if (!currentEpisodeIndex.value && episodeInfo.value.episodeId) {
-                currentEpisodeIndex.value = Array.from(
-                    episodeList.value
-                ).findIndex(episode => {
-                    return episode[0] == episodeInfo.value.episodeId;
-                });
+            if (!currentEpisode.index && episodeInfo.value.episodeId) {
+                currentEpisode.index = Array.from(episodeList.value).findIndex(
+                    episode => {
+                        return episode[0] == episodeInfo.value.episodeId;
+                    }
+                );
             }
         });
 
@@ -181,11 +190,11 @@ export default {
             () => episodeInfo.value.episodeId,
             (val, oldVal) => {
                 // 找出目前收聽 episode 的 index
-                currentEpisodeIndex.value = Array.from(
-                    episodeList.value
-                ).findIndex(episode => {
-                    return episode[0] == episodeInfo.value.episodeId;
-                });
+                currentEpisode.index = Array.from(episodeList.value).findIndex(
+                    episode => {
+                        return episode[0] == episodeInfo.value.episodeId;
+                    }
+                );
 
                 setAudio({
                     isUpdateEpisode: val !== oldVal,
@@ -242,7 +251,7 @@ export default {
                             ? 1
                             : e.clientX / document.body.clientWidth);
                     audioRef.value.currentTime = selectedTime;
-                    episodeCurrentTime.value = getAudioTime(selectedTime);
+                    currentEpisode.currentTime = getAudioTime(selectedTime);
                 }
 
                 // 移除相關 event
@@ -269,8 +278,7 @@ export default {
             isPlaying,
             isBarDragging,
             isFocusPlayBar,
-            episodeCurrentTime,
-            episodeDuration,
+            currentEpisode,
             audioRef,
             playBarRef,
             currentPlayBarRef,

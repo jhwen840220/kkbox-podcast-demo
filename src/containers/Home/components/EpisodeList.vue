@@ -1,11 +1,11 @@
 <template>
     <section
-        v-if="currentEpisodeList.length"
+        v-if="currentEpisodeList.data.length"
         :class="shouldchannelInfoSticky ? $style['episode-section-sticky'] : ''"
         ref="episodeListRef"
     >
         <EpisodeCard
-            v-for="(episode, index) in currentEpisodeList"
+            v-for="(episode, index) in currentEpisodeList.data"
             :key="index"
             :imgSrc="episode.imgSrc"
             :title="episode.title"
@@ -19,6 +19,7 @@
 <script>
 import {
     ref,
+    reactive,
     onMounted,
     onBeforeUnmount,
     computed,
@@ -52,8 +53,10 @@ export default {
         };
 
         const episodeList = computed(() => store.getters.episodeList);
-        const currentCount = ref(0);
-        const currentEpisodeList = ref([]);
+        const currentEpisodeList = reactive({
+            data: [],
+            count: 0
+        })
 
         // 原始資料格式為 map，需轉換為 array 進行後續操作
         const handleFormatEpisodeList = dataMap => {
@@ -70,11 +73,11 @@ export default {
         // 初始渲染
         const getCurrentEpisodeList = dataMap => {
             const totalEpisodeList = handleFormatEpisodeList(dataMap);
-            currentCount.value =
+            currentEpisodeList.count =
                 totalEpisodeList.length > 20 ? 20 : totalEpisodeList.length;
-            currentEpisodeList.value = totalEpisodeList.slice(
+            currentEpisodeList.data = totalEpisodeList.slice(
                 0,
-                currentCount.value
+                currentEpisodeList.count
             );
         };
 
@@ -104,18 +107,18 @@ export default {
             if (
                 !isIncreasingCount.value &&
                 lastTwoCard.offsetTop - window.pageYOffset < 500 &&
-                currentCount.value < totalEpisodeList.length
+                currentEpisodeList.count < totalEpisodeList.length
             ) {
                 isIncreasingCount.value = true;
-                currentCount.value =
-                    currentCount.value +
-                    (totalEpisodeList.length - currentCount.value > 20
+                currentEpisodeList.count =
+                    currentEpisodeList.count +
+                    (totalEpisodeList.length - currentEpisodeList.count > 20
                         ? 20
-                        : totalEpisodeList.length - currentCount.value);
+                        : totalEpisodeList.length - currentEpisodeList.count);
 
-                currentEpisodeList.value = totalEpisodeList.slice(
+                currentEpisodeList.data = totalEpisodeList.slice(
                     0,
-                    currentCount.value
+                    currentEpisodeList.count
                 );
                 nextTick(() => {
                     isIncreasingCount.value = false;

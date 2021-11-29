@@ -1,7 +1,7 @@
 <template>
     <img
-        ref="imgRef"
-        :src="imgSrc"
+        :ref="el => imgInfo.ref = el"
+        :src="imgInfo.src"
         :alt="alt"
         :width="width"
         :height="height"
@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from "vue";
+import { reactive, onMounted, watch } from "vue";
 import { setIntersectionObserver } from "~utils";
 import kkboxLogo from "~images/kkbox.png";
 export default {
@@ -33,18 +33,20 @@ export default {
         },
     },
     setup(props) {
-        const imgRef = ref(null);
-        const imgSrc = ref(kkboxLogo);
+        const imgInfo = reactive({
+            ref: null,
+            src: kkboxLogo,
+        });
 
         const setLazyLoad = src => {
             setIntersectionObserver({
-                target: imgRef.value,
+                target: imgInfo.ref,
                 callback: areas => {
                     if (!areas[0].isIntersecting) return;
-                    imgSrc.value = src;
+                    imgInfo.src = src;
                 },
                 fallback: () => {
-                    imgSrc.value = src;
+                    imgInfo.src = src;
                 },
             });
         };
@@ -61,8 +63,7 @@ export default {
         );
 
         return {
-            imgRef,
-            imgSrc,
+            imgInfo
         };
     },
 };

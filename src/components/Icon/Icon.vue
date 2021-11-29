@@ -1,8 +1,8 @@
 <template>
     <svg
         :view-box="file.viewBox"
-        :width="svgWidth"
-        :height="svgHeight"
+        :width="svgSize.width"
+        :height="svgSize.height"
         :fill="fill"
         :aria-label="title"
         :class="svgClass"
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 
 const defaultWidth = 20;
 const defaultHeight = 20;
@@ -56,10 +56,10 @@ export default {
                 /* webpackMode: "eager" */
                 `~svg/${name}.svg`
             ).then(res => (file.value = res.default));
-        })
+        });
         watch(
             () => props.name,
-            (val) => {
+            val => {
                 import(
                     /* webpackChunkName: "IconSVG" */
                     /* webpackMode: "eager" */
@@ -67,17 +67,18 @@ export default {
                 ).then(res => (file.value = res.default));
             }
         );
+        const svgSize = reactive({
+            width,
+            height,
+        });
 
-        const svgWidth = ref(width);
-        const svgHeight = ref(height);
-
-        watch(file, (val) => {
+        watch(file, val => {
             if (val.viewBox) {
                 const viewBoxArr = val.viewBox.split(" ");
-                svgWidth.value =
+                svgSize.width =
                     width ||
                     (viewBoxArr.length >= 3 ? viewBoxArr[2] : defaultWidth);
-                svgHeight.value =
+                svgSize.height =
                     height ||
                     (viewBoxArr.length >= 4 ? viewBoxArr[3] : defaultHeight);
             }
@@ -85,8 +86,7 @@ export default {
 
         return {
             file,
-            svgWidth,
-            svgHeight,
+            svgSize,
         };
     },
 };
