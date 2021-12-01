@@ -17,15 +17,7 @@
 </template>
 
 <script>
-import {
-    ref,
-    reactive,
-    onMounted,
-    onBeforeUnmount,
-    computed,
-    watch,
-    nextTick,
-} from "vue";
+import { ref, reactive, onMounted, onBeforeUnmount, computed, watch, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 
@@ -55,8 +47,8 @@ export default {
         const episodeList = computed(() => store.getters.episodeList);
         const currentEpisodeList = reactive({
             data: [],
-            count: 0
-        })
+            count: 0,
+        });
 
         // 原始資料格式為 map，需轉換為 array 進行後續操作
         const handleFormatEpisodeList = dataMap => {
@@ -73,12 +65,8 @@ export default {
         // 初始渲染
         const getCurrentEpisodeList = dataMap => {
             const totalEpisodeList = handleFormatEpisodeList(dataMap);
-            currentEpisodeList.count =
-                totalEpisodeList.length > 20 ? 20 : totalEpisodeList.length;
-            currentEpisodeList.data = totalEpisodeList.slice(
-                0,
-                currentEpisodeList.count
-            );
+            currentEpisodeList.count = Math.min(totalEpisodeList.length, 20);
+            currentEpisodeList.data = totalEpisodeList.slice(0, currentEpisodeList.count);
         };
 
         onMounted(() => {
@@ -101,8 +89,7 @@ export default {
 
             const episodeCardCount = episodeListRef.value.children.length;
 
-            const lastTwoCard =
-                episodeListRef.value.children[episodeCardCount - 2];
+            const lastTwoCard = episodeListRef.value.children[episodeCardCount - 2];
 
             if (
                 !isIncreasingCount.value &&
@@ -111,15 +98,9 @@ export default {
             ) {
                 isIncreasingCount.value = true;
                 currentEpisodeList.count =
-                    currentEpisodeList.count +
-                    (totalEpisodeList.length - currentEpisodeList.count > 20
-                        ? 20
-                        : totalEpisodeList.length - currentEpisodeList.count);
+                    currentEpisodeList.count + Math.min(totalEpisodeList.length - currentEpisodeList.count, 20);
 
-                currentEpisodeList.data = totalEpisodeList.slice(
-                    0,
-                    currentEpisodeList.count
-                );
+                currentEpisodeList.data = totalEpisodeList.slice(0, currentEpisodeList.count);
                 nextTick(() => {
                     isIncreasingCount.value = false;
                 });
