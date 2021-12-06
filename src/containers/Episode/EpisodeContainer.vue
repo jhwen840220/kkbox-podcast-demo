@@ -1,29 +1,16 @@
 <template>
     <div v-if="hasEpisodeInfo">
-        <div
-            :class="[$style.observer, 'position-absolute']"
-            ref="episodeInfoRef"
-        ></div>
+        <div :class="[$style.observer, 'position-absolute']" ref="episodeInfoRef"></div>
         <section
             :class="[
                 $style['episode-section'],
                 'p-md d-flex',
                 shouldEpisodeInfoSticky
-                    ? [
-                          $style['episode-section-small'],
-                          'position-sticky p-t-md align-items-center',
-                      ]
+                    ? [$style['episode-section-small'], 'position-sticky p-t-md align-items-center']
                     : ['align-items-end'],
             ]"
         >
-            <div
-                :class="[
-                    $style['episode-logo'],
-                    shouldEpisodeInfoSticky
-                        ? [$style['episode-logo-small']]
-                        : [],
-                ]"
-            >
+            <div :class="[$style['episode-logo'], shouldEpisodeInfoSticky ? [$style['episode-logo-small']] : []]">
                 <LazyLoadImage
                     :src="currentEpisodeInfo.imgSrc"
                     :alt="currentEpisodeInfo.title"
@@ -39,25 +26,16 @@
                 :text="isCurrentEpisode ? '重新播放' : '播放'"
                 svgIconName="play-svgo"
                 data-test="play-btn"
-                :class="[
-                    shouldEpisodeInfoSticky ? 'm-t-md' : 'm-b-sm',
-                    'm-l-xl',
-                ]"
+                :class="[shouldEpisodeInfoSticky ? 'm-t-md' : 'm-b-sm', 'm-l-xl']"
                 @click="onTogglePlay"
             />
         </section>
-        <section
-            :class="[
-                shouldEpisodeInfoSticky ? $style['desc-section-sticky'] : '',
-                'p-y-md',
-            ]"
-        >
+        <section :class="[shouldEpisodeInfoSticky ? $style['desc-section-sticky'] : '', 'p-y-md']">
             <p class="fz-20 fz-bold">本集介紹</p>
             <article class="m-t-lg" v-html="currentEpisodeInfo.desc" />
         </section>
     </div>
     <EmptyEpisode v-else />
-
 </template>
 <script>
 import { ref, onMounted, computed, watch } from "vue";
@@ -99,11 +77,9 @@ export default {
             } else {
                 currentEpisodeInfo.value = episodeData;
 
-                const metaTitle = Array.from(episodeList.value).find(
-                    episode => {
-                        return episode[0] == route.params.id;
-                    }
-                )[1].title;
+                const metaTitle = Array.from(episodeList.value).find(episode => {
+                    return episode[0] == route.params.id;
+                })[1].title;
 
                 window.document.title = `${metaTitle} | KKBOX podcast`;
             }
@@ -113,9 +89,7 @@ export default {
             setIntersectionObserver({
                 target: episodeInfoRef.value,
                 callback: areas => {
-                    shouldEpisodeInfoSticky.value = !(
-                        areas[0].intersectionRatio > 0.5
-                    );
+                    shouldEpisodeInfoSticky.value = !(areas[0].intersectionRatio > 0.5);
                 },
                 options: {
                     root: null,
@@ -125,8 +99,7 @@ export default {
 
             if (episodeList.value) {
                 detectEpisodeInfo();
-                isCurrentEpisode.value =
-                    episodeInfo.value.episodeId === route.params.id;
+                isCurrentEpisode.value = episodeInfo.value.episodeId === route.params.id;
             }
         });
 
@@ -143,16 +116,14 @@ export default {
                     ...currentEpisodeInfo.value,
                     episodeId: route.params.id,
                 });
-                isCurrentEpisode.value =
-                    episodeInfo.value.episodeId === route.params.id;
+                isCurrentEpisode.value = episodeInfo.value.episodeId === route.params.id;
             }
         };
 
         watch(
             () => episodeInfo.value.episodeId,
             () => {
-                isCurrentEpisode.value =
-                    episodeInfo.value.episodeId === route.params.id;
+                isCurrentEpisode.value = episodeInfo.value.episodeId === route.params.id;
             }
         );
 

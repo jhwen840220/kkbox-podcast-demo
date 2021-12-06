@@ -1,16 +1,9 @@
 <template>
     <footer
-        :class="[
-            $style['player-section'],
-            'position-fixed p-x-lg p-t-md p-b-md d-flex align-items-center',
-        ]"
+        :class="[$style['player-section'], 'position-fixed p-x-lg p-t-md p-b-md d-flex align-items-center']"
         v-if="episodeInfo.episodeId"
     >
-        <div
-            :class="[$style['play-bar'], 'position-absolute']"
-            ref="playBarRef"
-            @mousedown="onMovePlayBar"
-        >
+        <div :class="[$style['play-bar'], 'position-absolute']" ref="playBarRef" @mousedown="onMovePlayBar">
             <div
                 :class="[
                     $style['play-bar-current'],
@@ -23,45 +16,24 @@
 
         <Icon
             :class="$style['play-btn']"
-            :name="
-                isPlaying ? 'pause-with-border-svgo' : 'play-with-border-svgo'
-            "
+            :name="isPlaying ? 'pause-with-border-svgo' : 'play-with-border-svgo'"
             @click="onTogglePlay"
         />
-        <LazyLoadImage
-            :src="channelInfo.imgSrc"
-            :alt="channelInfo.name"
-            :width="45"
-            :height="45"
-            class="m-l-md"
-        />
+        <LazyLoadImage :src="channelInfo.imgSrc" :alt="channelInfo.name" :width="45" :height="45" class="m-l-md" />
         <div class="m-l-lg">
             <p class="fz-16 fz-bold">{{ episodeInfo.title }}</p>
             <p>{{ channelInfo.name }}</p>
         </div>
-        <div
-            v-if="currentEpisode.duration"
-            :class="[$style['duration-block'], 'position-absolute']"
-        >
+        <div v-if="currentEpisode.duration" :class="[$style['duration-block'], 'position-absolute']">
             {{ currentEpisode.currentTime }} / {{ currentEpisode.duration }}
         </div>
     </footer>
     <audio ref="audioRef"></audio>
-    <div
-        v-if="isBarDragging"
-        :class="[$style['bar-dragging-mask'], 'position-fixed']"
-    />
+    <div v-if="isBarDragging" :class="[$style['bar-dragging-mask'], 'position-fixed']" />
 </template>
 
 <script>
-import {
-    ref,
-    reactive,
-    onMounted,
-    onBeforeUnmount,
-    computed,
-    watch,
-} from "vue";
+import { ref, reactive, onMounted, onBeforeUnmount, computed, watch } from "vue";
 import { useStore } from "vuex";
 import { getAudioTime } from "~utils";
 import Icon from "~components/Icon/Icon";
@@ -98,11 +70,7 @@ export default {
          * @param { boolean } isRestart 是否按「重新播放」
          */
         const setAudio = ({ isUpdateEpisode = true, isRestart = false }) => {
-            if (
-                isRestart ||
-                audioRef.value.getAttribute("src") !==
-                    episodeInfo.value.audioSrc
-            ) {
+            if (isRestart || audioRef.value.getAttribute("src") !== episodeInfo.value.audioSrc) {
                 currentEpisode.currentTime = "";
                 currentEpisode.duration = "";
                 audioRef.value.setAttribute("src", episodeInfo.value.audioSrc);
@@ -113,18 +81,10 @@ export default {
 
             audioRef.value.onplay = () => {
                 setEpisodeCurrentTime = setInterval(() => {
-                    currentEpisode.currentTime = getAudioTime(
-                        audioRef.value.currentTime
-                    );
+                    currentEpisode.currentTime = getAudioTime(audioRef.value.currentTime);
                     // 因為會有總長度在會後幾秒會多加的緣故，需多判斷是否需要更改總長度秒數
-                    if (
-                        audioRef.value.duration &&
-                        currentEpisode.duration !==
-                            getAudioTime(audioRef.value.duration)
-                    ) {
-                        currentEpisode.duration = getAudioTime(
-                            audioRef.value.duration
-                        );
+                    if (audioRef.value.duration && currentEpisode.duration !== getAudioTime(audioRef.value.duration)) {
+                        currentEpisode.duration = getAudioTime(audioRef.value.duration);
                     }
                 }, 250);
             };
@@ -137,9 +97,7 @@ export default {
                 // 如果沒在拖曳進度條的狀態下才可依撥放進度改變長度
                 if (!isBarDragging.value) {
                     const { currentTime, duration } = audioRef.value;
-                    const playingPresent = `${
-                        (currentTime / duration) * document.body.clientWidth
-                    }px`;
+                    const playingPresent = `${(currentTime / duration) * document.body.clientWidth}px`;
                     currentPlayBarRef.value.style.transform = `translateX(${playingPresent})`;
                 }
             };
@@ -151,9 +109,7 @@ export default {
                 // 若播放集數非為最後一集，則將 episodeInfo 改為下一集
                 if (currentEpisode.index > 0) {
                     // map 轉 array 格式會變為 [[key], [value]]
-                    const nextEpisodeInfo = Array.from(episodeList.value)[
-                        currentEpisode.index - 1
-                    ];
+                    const nextEpisodeInfo = Array.from(episodeList.value)[currentEpisode.index - 1];
                     store.commit("SET_EPISODE_INFO", {
                         ...nextEpisodeInfo[1], // [1] 為 value
                         episodeId: nextEpisodeInfo[0], // [0] 為 key
@@ -167,9 +123,7 @@ export default {
                 isPlaying.value = true;
             } else {
                 // 點擊 footer 的撥放鍵切換
-                isPlaying.value
-                    ? audioRef.value.pause()
-                    : audioRef.value.play();
+                isPlaying.value ? audioRef.value.pause() : audioRef.value.play();
                 isPlaying.value = !isPlaying.value;
             }
         };
@@ -177,11 +131,9 @@ export default {
         onMounted(() => {
             // 進頁面後尋找目前播放的集數 index
             if (!currentEpisode.index && episodeInfo.value.episodeId) {
-                currentEpisode.index = Array.from(episodeList.value).findIndex(
-                    episode => {
-                        return episode[0] == episodeInfo.value.episodeId;
-                    }
-                );
+                currentEpisode.index = Array.from(episodeList.value).findIndex(episode => {
+                    return episode[0] == episodeInfo.value.episodeId;
+                });
             }
         });
 
@@ -190,11 +142,9 @@ export default {
             () => episodeInfo.value.episodeId,
             (val, oldVal) => {
                 // 找出目前收聽 episode 的 index
-                currentEpisode.index = Array.from(episodeList.value).findIndex(
-                    episode => {
-                        return episode[0] == episodeInfo.value.episodeId;
-                    }
-                );
+                currentEpisode.index = Array.from(episodeList.value).findIndex(episode => {
+                    return episode[0] == episodeInfo.value.episodeId;
+                });
 
                 setAudio({
                     isUpdateEpisode: val !== oldVal,
@@ -245,11 +195,7 @@ export default {
                 isBarDragging.value = false;
                 // 並且 audio 播放指定位置
                 if (audioRef.value.duration) {
-                    const selectedTime =
-                        audioRef.value.duration *
-                        (e.clientX >= document.body.clientWidth
-                            ? 1
-                            : e.clientX / document.body.clientWidth);
+                    const selectedTime = audioRef.value.duration * Math.min(1, e.clientX / document.body.clientWidth);
                     audioRef.value.currentTime = selectedTime;
                     currentEpisode.currentTime = getAudioTime(selectedTime);
                 }
